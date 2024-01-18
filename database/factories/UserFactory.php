@@ -46,16 +46,16 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+
     public function configure()
     {
-        return $this->afterCreating(function(User $user) {
+        return $this->afterCreating(function (User $user) {
             $user->assignRole(Roles::CUSTOMER->value);
         });
     }
 
     public function withEmail(string $email)
     {
-        return $this->state(fn(array $attrs) => ['email' => $email]);
+        return $this->state(fn (array $attrs) => ['email' => $email]);
     }
 }
-
