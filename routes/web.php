@@ -24,5 +24,5 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::name('admin.')->prefix('admin')->middleware(['role:admin|moderator'])->group(function() {
     Route::get('dashboard', \App\Http\Controllers\Admin\DashboardController::class)->name('dashboard'); // admin.dashboard
     Route::resource('categories', \App\Http\Controllers\Admin\CategoriesController::class)
-         ->except(['show']);
+        ->except(['show']);
 });
