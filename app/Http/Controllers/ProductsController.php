@@ -32,4 +32,5 @@ class ProductsController extends Controller
             ->where('id', '=', $product->id)
             ?->first();
     }
+
 }
