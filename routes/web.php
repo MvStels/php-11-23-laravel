@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Order;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('event', function() {
+    $order = Order::all()->last();
+    return app(\App\Services\Contract\InvoicesServiceContract::class)->generate($order)->stream();
+});
+
 Route::get('/', \App\Http\Controllers\HomeController::class)->name('home');
 
 Route::resource('products', \App\Http\Controllers\ProductsController::class)->only(['index', 'show']);
@@ -25,6 +31,10 @@ Route::name('ajax.')->prefix('ajax')->middleware('auth')->group(function() {
         Route::post('products/{product}/images', [\App\Http\Controllers\Ajax\Products\ImagesController::class, 'store'])->name('products.images.store');
         Route::delete('images/{image}', \App\Http\Controllers\Ajax\RemoveImagesController::class)->name('images.destroy');
     });
+});
+Route::prefix('paypal')->name('paypal.')->group(function() {
+    Route::post('order/create', [\App\Http\Controllers\Ajax\Payments\PaypalController::class, 'create'])->name('create');
+    Route::post('order/{orderId}/capture', [\App\Http\Controllers\Ajax\Payments\PaypalController::class, 'capture'])->name('capture');
 });
 
 Route::name('admin.')->prefix('admin')->middleware(['role:admin|moderator'])->group(function() {
@@ -47,4 +57,9 @@ Route::name('cart.')->prefix('cart')->group(function() {
     Route::post('{categories}', [\App\Http\Controllers\CartController::class, 'add'])->name('add');
     Route::delete('/', [\App\Http\Controllers\CartController::class, 'remove'])->name('remove');
     Route::post('{categories}/count', [\App\Http\Controllers\CartController::class, 'countUpdate'])->name('count.update');
+});
+Route::middleware(['auth'])->group(function() {
+    Route::get('checkout', \App\Http\Controllers\CheckoutController::class)->name('checkout');
+    Route::get('orders/{order}/paypal/thank-you', \App\Http\Controllers\Orders\PaypalController::class);
+    Route::get('invoices/{order}', \App\Http\Controllers\InvoiceController::class)->name('invoice');
 });
