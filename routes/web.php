@@ -16,8 +16,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('event', function() {
     $order = Order::all()->last();
-    return app(\App\Services\Contract\InvoicesServiceContract::class)->generate($order)->stream();
+    \App\Events\OrderCreated::dispatch($order);
 });
+
 
 Route::get('/', \App\Http\Controllers\HomeController::class)->name('home');
 
