@@ -64,3 +64,8 @@ Route::middleware(['auth'])->group(function() {
     Route::get('orders/{order}/paypal/thank-you', \App\Http\Controllers\Orders\PaypalController::class);
     Route::get('invoices/{order}', \App\Http\Controllers\InvoiceController::class)->name('invoice');
 });
+Route::name('callbacks.')->prefix('callback')->group(function() {
+    Route::get('telegram', \App\Http\Controllers\Callbacks\JoinTelegramCallback::class)
+        ->middleware(['role:admin'])
+        ->name('telegram');
+});
