@@ -29,6 +29,15 @@ class Product extends Model
         return $this->morphMany(Image::class, 'imageable');
     }
 
+    public function followers():BelongsToMany
+    {
+        return $this->belongsToMany(
+            User::class,
+            'wish_list',
+            'product_id',
+            'user_id'
+        );
+    }
     public function scopeAvailable(Builder $query): Builder
     {
         return $query->where('quantity', '>', 0);
@@ -81,5 +90,9 @@ class Product extends Model
                 return round($result, 2);
             }
         );
+    }
+    public function isExists(): Attribute
+    {
+        return Attribute::get(fn() => $this->attributes['quantity'] > 0);
     }
 }
