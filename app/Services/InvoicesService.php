@@ -18,6 +18,7 @@ class InvoicesService implements Contract\InvoicesServiceContract
         $order->loadMissing(['user', 'transaction', 'products']);
 
         $fullName = "$order->name $order->surname";
+
         $orderSerial = $order->vendor_order_id ?? $order->id;
         $fileName = Str::of("$fullName $orderSerial")->slug();
 
