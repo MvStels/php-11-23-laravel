@@ -42,9 +42,4 @@ Route::name('cart.')->prefix('cart')->group(function() {
     Route::post('{product}/count', [\App\Http\Controllers\CartController::class, 'countUpdate'])->name('count.update');
 });
 
-Route::name('cart.')->prefix('cart')->group(function() {
-    Route::get('/', [\App\Http\Controllers\CartController::class, 'index'])->name('index');
-    Route::post('{categories}', [\App\Http\Controllers\CartController::class, 'add'])->name('add');
-    Route::delete('/', [\App\Http\Controllers\CartController::class, 'remove'])->name('remove');
-    Route::post('{categories}/count', [\App\Http\Controllers\CartController::class, 'countUpdate'])->name('count.update');
-});
+

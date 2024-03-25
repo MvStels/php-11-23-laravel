@@ -18,24 +18,17 @@ class CategoriesController extends Controller
 
         return view('categories.index', compact('categories' ));
     }
-
     public function show(Category $category)
     {
-        $gallery = collect($category->images()->get()->map(fn($image) => $image->url));
-        $gallery->prepend($category->thumbnailUrl);
-        $rowId = $this->getProductFromCart($category)?->rowId;
-        $isInCart = !!$rowId;
+//        $gallery = collect($category-->get()->map(fn($image) => $image->url));
+//        $gallery->prepend($category->perenet_id);
+//        $rowId = $this->getProductFromCart($category)?->rowId;
+//        $isInCart = !!$rowId;
 
-        return view('$categories.show', compact('category', 'gallery', 'isInCart', 'rowId'));
+        return view('categories.show', compact('category'));
     }
 
-    protected function getProductFromCart(Category $category): CartItem|null
-    {
-        return Cart::instance('cart')
-            ->content()
-            ->where('id', '=', $category->id)
-            ?->first();
-    }
+
 
 }
 
