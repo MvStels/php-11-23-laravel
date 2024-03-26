@@ -66,6 +66,9 @@ class ProductsController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        $product->categories()->detach();
+        $product->delete();
+
+        return redirect()->route('admin.products.index');
     }
 }
