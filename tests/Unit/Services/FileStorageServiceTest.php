@@ -2,10 +2,7 @@
 
 namespace Tests\Unit\Services;
 
-
-
 use App\Services\Contract\FileStorageServiceContract;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -18,7 +15,7 @@ class FileStorageServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->service= app(FileStorageServiceContract::class);
+        $this->service = app(FileStorageServiceContract::class);
     }
 
     public function test_file_upload(): void
@@ -26,7 +23,7 @@ class FileStorageServiceTest extends TestCase
         $filePath = $this->uploadFile();
 
         $this->assertTrue(Storage::has($filePath));
-        $this->assertEquals(Storage::getVisibility($filePath),'public');
+        $this->assertEquals(Storage::getVisibility($filePath), 'public');
     }
 
     public function test_file_upload_with_additional_path()
@@ -36,21 +33,23 @@ class FileStorageServiceTest extends TestCase
 
         $this->assertTrue(Storage::has($filePath));
         $this->assertStringContainsString('test', $filePath);
-        $this->assertEquals(Storage::getVisibility($filePath),'public');
+        $this->assertEquals(Storage::getVisibility($filePath), 'public');
     }
 
-        public function test_remove_file()
-        {
-            $filePath = $this->uploadFile();
-            $this->assertTrue(Storage::has($filePath));
-            $this->service->remove($filePath);
-
-            $this->assertFalse(Storage::has($filePath));
-        }
-    protected function uploadFile($fileName = 'image.png', $additionPath = ''):string
+    public function test_remove_file()
     {
-        $file=UploadedFile::fake()->image($fileName);
+        $filePath = $this->uploadFile();
+        $this->assertTrue(Storage::has($filePath));
+        $this->service->remove($filePath);
+
+        $this->assertFalse(Storage::has($filePath));
+    }
+
+    protected function uploadFile($fileName = 'image.png', $additionPath = ''): string
+    {
+        $file = UploadedFile::fake()->image($fileName);
+
         //TetsUpdate
-        return $this->service->upload($file ,$additionPath);
+        return $this->service->upload($file, $additionPath);
     }
 }

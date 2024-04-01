@@ -7,7 +7,6 @@ use App\Models\User;
 use Database\Seeders\PermissionAndRolesSeeder;
 use Database\Seeders\UsersSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class LoginTest extends TestCase
@@ -20,6 +19,7 @@ class LoginTest extends TestCase
 
         $this->app->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
     }
+
     protected function afterRefreshingDatabase()
     {
         $this->seed(PermissionAndRolesSeeder::class);
@@ -70,9 +70,9 @@ class LoginTest extends TestCase
         $response->assertStatus(403);
     }
 
-protected function getUser(Roles $role = Roles::ADMIN):User
-{
-    return User::role($role->value)->firstOrFail();
+    protected function getUser(Roles $role = Roles::ADMIN): User
+    {
+        return User::role($role->value)->firstOrFail();
 
-}
+    }
 }

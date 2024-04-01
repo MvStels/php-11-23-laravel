@@ -1,6 +1,5 @@
 <?php
 
-
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,11 +13,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('test', function() {
+Route::get('test', function () {
     $user = \App\Models\User::find(1);
-    \App\Events\UserNotify::dispatch($user, 'test message for user = ' . $user->id);
+    \App\Events\UserNotify::dispatch($user, 'test message for user = '.$user->id);
 });
-
 
 Route::get('/', \App\Http\Controllers\HomeController::class)->name('home');
 
@@ -27,18 +25,18 @@ Route::resource('categories', \App\Http\Controllers\CategoriesController::class)
 
 Auth::routes();
 
-Route::name('ajax.')->prefix('ajax')->middleware('auth')->group(function() {
-    Route::group(['role:admin|moderator'], function() {
+Route::name('ajax.')->prefix('ajax')->middleware('auth')->group(function () {
+    Route::group(['role:admin|moderator'], function () {
         Route::post('products/{product}/images', [\App\Http\Controllers\Ajax\Products\ImagesController::class, 'store'])->name('products.images.store');
         Route::delete('images/{image}', \App\Http\Controllers\Ajax\RemoveImagesController::class)->name('images.destroy');
     });
 });
-Route::prefix('paypal')->name('paypal.')->group(function() {
+Route::prefix('paypal')->name('paypal.')->group(function () {
     Route::post('order/create', [\App\Http\Controllers\Ajax\Payments\PaypalController::class, 'create'])->name('create');
     Route::post('order/{orderId}/capture', [\App\Http\Controllers\Ajax\Payments\PaypalController::class, 'capture'])->name('capture');
 });
 
-Route::name('admin.')->prefix('admin')->middleware(['role:admin|moderator'])->group(function() {
+Route::name('admin.')->prefix('admin')->middleware(['role:admin|moderator'])->group(function () {
     Route::get('dashboard', \App\Http\Controllers\Admin\DashboardController::class)->name('dashboard'); // admin.dashboard
     Route::resource('categories', \App\Http\Controllers\Admin\CategoriesController::class)
         ->except(['show']);
@@ -46,14 +44,14 @@ Route::name('admin.')->prefix('admin')->middleware(['role:admin|moderator'])->gr
         ->except(['show']);
 });
 
-Route::name('cart.')->prefix('cart')->group(function() {
+Route::name('cart.')->prefix('cart')->group(function () {
     Route::get('/', [\App\Http\Controllers\CartController::class, 'index'])->name('index');
     Route::post('{product}', [\App\Http\Controllers\CartController::class, 'add'])->name('add');
     Route::delete('/', [\App\Http\Controllers\CartController::class, 'remove'])->name('remove');
     Route::post('{product}/count', [\App\Http\Controllers\CartController::class, 'countUpdate'])->name('count.update');
 });
 
-Route::middleware(['auth'])->group(function() {
+Route::middleware(['auth'])->group(function () {
     Route::get('checkout', \App\Http\Controllers\CheckoutController::class)->name('checkout');
     Route::get('orders/{order}/paypal/thank-you', \App\Http\Controllers\Orders\PaypalController::class);
     Route::get('invoices/{order}', \App\Http\Controllers\InvoiceController::class)->name('invoice');
@@ -62,7 +60,7 @@ Route::middleware(['auth'])->group(function() {
     Route::get('account/wishlist', \App\Http\Controllers\Account\WishlistController::class)->name('account.wishlist');
 });
 
-Route::name('callbacks.')->prefix('callback')->group(function() {
+Route::name('callbacks.')->prefix('callback')->group(function () {
     Route::get('telegram', \App\Http\Controllers\Callbacks\JoinTelegramCallback::class)
         ->middleware(['role:admin'])
         ->name('telegram');

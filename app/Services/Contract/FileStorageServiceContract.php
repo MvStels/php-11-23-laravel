@@ -10,4 +10,3 @@ interface FileStorageServiceContract
 
     public function remove(string $filePath): void;
 }
-
