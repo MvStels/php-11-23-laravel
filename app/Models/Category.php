@@ -32,10 +32,6 @@ class Category extends Model
     {
         return $this->belongsToMany(Product::class);
     }
-    public function scopeAvailable(Builder $query): Builder
-    {
-        return $query->where('quantity', '>', 0);
-    }
 
 }
 
