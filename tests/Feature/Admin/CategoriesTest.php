@@ -201,7 +201,7 @@ class CategoriesTest extends TestCase
     public function test_create_category(): void
     {
         $categoryData = [
-            'name' => 'Iphone '
+            'name' => 'Iphone'
         ];
 
 
@@ -213,19 +213,18 @@ class CategoriesTest extends TestCase
         $this->assertDatabaseHas(Category::class, $categoryData);
     }
 
-    public function test_create_category_invalid(): void
+    public function test_create_category_with_invalid_data(): void
     {
         $categoryData = [
-
+            'name' => '',
         ];
-
 
         $response = $this->actingAs(User::role('admin')->first())
             ->post(route('admin.categories.store'), $categoryData);
 
         $response->assertStatus(302);
 
-        $this->assertDatabaseHas(Category::class, $categoryData);
+        $this->assertDatabaseMissing(Category::class, $categoryData);
     }
 
 
