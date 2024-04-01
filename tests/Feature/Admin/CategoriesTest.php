@@ -5,15 +5,10 @@ namespace Tests\Feature\Admin;
 use App\Enums\Roles;
 use App\Models\Category;
 use App\Models\User;
-use App\Services\FileStorageService;
 use Database\Seeders\PermissionAndRolesSeeder;
 use Database\Seeders\UsersSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Http\UploadedFile;
-use Mockery\MockInterface;
 use Tests\TestCase;
-
 
 class CategoriesTest extends TestCase
 {
@@ -25,6 +20,7 @@ class CategoriesTest extends TestCase
 
         $this->app->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
     }
+
     protected function afterRefreshingDatabase()
     {
         $this->seed(PermissionAndRolesSeeder::class);
@@ -35,12 +31,13 @@ class CategoriesTest extends TestCase
     {
         $categories = Category::factory(2)->create();
         $response = $this->actingAs($this->getUser())
-        ->get(route('admin.categories.index'));
+            ->get(route('admin.categories.index'));
 
         $response->assertSuccessful();
         $response->assertViewIs('admin.categories.index');
         $response->assertSeeInOrder($categories->pluck('name')->toArray());
-}
+    }
+
     public function test_does_note_allow_see_categories_with_role_customer()
     {
 
@@ -55,31 +52,31 @@ class CategoriesTest extends TestCase
         $data = Category::factory()->make()->toArray();
 
         $response = $this->actingAs($this->getUser())
-        ->post(route('admin.categories.store'),$data);
-
+            ->post(route('admin.categories.store'), $data);
 
         $response->assertStatus(302);
         $response->assertRedirectToRoute('admin.categories.index');
-        $this->assertDatabaseHas(Category::class,[
-            'name' => $data['name']
-            ]);
+        $this->assertDatabaseHas(Category::class, [
+            'name' => $data['name'],
+        ]);
 
     }
+
     public function test_create_category_with_invalid_date()
     {
         $data = ['name' => 'a'];
 
         $response = $this->actingAs($this->getUser())
-            ->post(route('admin.categories.store'),$data);
-
+            ->post(route('admin.categories.store'), $data);
 
         $response->assertStatus(302);
-        $response->assertSessionHasErrors(['name' =>'Should be more than 1 symbol']);
-        $this->assertDatabaseMissing(Category::class,[
-            'name' => $data['name']
+        $response->assertSessionHasErrors(['name' => 'Should be more than 1 symbol']);
+        $this->assertDatabaseMissing(Category::class, [
+            'name' => $data['name'],
         ]);
 
     }
+
     public function test_editing_category_with_valid_data()
     {
         $category = Category::factory()->create();
@@ -91,11 +88,10 @@ class CategoriesTest extends TestCase
         $response = $this->actingAs($this->getUser())
             ->put(route('admin.categories.update', $category), [
                 'name' => $updatedName,
-                'parent_id' => $newParent->id
+                'parent_id' => $newParent->id,
             ]);
 
         $response->assertStatus(302);
-
 
         $updatedCategory = Category::find($category->id);
         $this->assertEquals($updatedName, $updatedCategory->name);
@@ -111,7 +107,7 @@ class CategoriesTest extends TestCase
         $response = $this->actingAs($this->getUser())
             ->put(route('admin.categories.update', $category), [
                 'name' => '',
-                'parent_id' => $newParent->id
+                'parent_id' => $newParent->id,
             ]);
 
         $response->assertStatus(302);
@@ -121,34 +117,34 @@ class CategoriesTest extends TestCase
         $this->assertEquals($category->name, $updatedCategory->name);
         $this->assertEquals($category->parent_id, $updatedCategory->parent_id);
     }
+
     public function test_update_category_with_valid_date()
     {
         $category = Category::factory()->create();
         $parent = Category::factory()->create();
 
         $response = $this->actingAs($this->getUser())
-            ->put(route('admin.categories.update',$category),[
+            ->put(route('admin.categories.update', $category), [
                 'name' => $category->name,
-                'parent_id' => $parent->id
+                'parent_id' => $parent->id,
             ]);
 
         $response->assertStatus(302);
-        $response->assertRedirectToRoute('admin.categories.edit',compact('category'));
-         $category->refresh();
-         $this->assertEquals($category->parent_id,$parent->id);
+        $response->assertRedirectToRoute('admin.categories.edit', compact('category'));
+        $category->refresh();
+        $this->assertEquals($category->parent_id, $parent->id);
 
     }
+
     public function test_update_category_with_invalid_date()
     {
         $category = Category::factory()->create();
 
-
         $response = $this->actingAs($this->getUser())
-            ->put(route('admin.categories.update',$category),[
-                'name' => "",
-                'parent_id' => ""
+            ->put(route('admin.categories.update', $category), [
+                'name' => '',
+                'parent_id' => '',
             ]);
-
 
         $response->assertStatus(302);
 
@@ -160,28 +156,27 @@ class CategoriesTest extends TestCase
         $category = Category::factory()->create();
 
         $this->assertDatabaseHas(Category::class,
-        [
-            'id' => $category->id
-        ]);
+            [
+                'id' => $category->id,
+            ]);
 
         $response = $this->actingAs($this->getUser())
-            ->delete(route('admin.categories.destroy',$category));
+            ->delete(route('admin.categories.destroy', $category));
 
         $response->assertStatus(302);
         $response->assertRedirectToRoute('admin.categories.index');
 
-
         $this->assertDatabaseMissing(Category::class,
             [
-                'id' => $category->id
+                'id' => $category->id,
             ]);
 
     }
+
     public function test_remove_category_invalid()
     {
 
         $category = Category::factory()->create();
-
 
         $this->assertDatabaseHas(Category::class, ['id' => $category->id]);
 
@@ -198,12 +193,12 @@ class CategoriesTest extends TestCase
 
         $response->assertStatus(404);
     }
+
     public function test_create_category(): void
     {
         $categoryData = [
-            'name' => 'Iphone'
+            'name' => 'Iphone',
         ];
-
 
         $response = $this->actingAs(User::role('admin')->first())
             ->post(route('admin.categories.store'), $categoryData);
@@ -227,8 +222,7 @@ class CategoriesTest extends TestCase
         $this->assertDatabaseMissing(Category::class, $categoryData);
     }
 
-
-    protected function getUser(Roles $role = Roles::ADMIN):User
+    protected function getUser(Roles $role = Roles::ADMIN): User
     {
         return User::role($role->value)->firstOrFail();
 

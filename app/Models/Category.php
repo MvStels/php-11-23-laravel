@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,7 +16,9 @@ class Category extends Model
     protected $fillable = ['name', 'slug', 'parent_id'];
 
     public $sortable = ['id', 'name', 'parent_id'];
+
     public $sortableAs = ['products_count'];
+
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'parent_id');
@@ -32,6 +33,4 @@ class Category extends Model
     {
         return $this->belongsToMany(Product::class);
     }
-
 }
-

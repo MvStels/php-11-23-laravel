@@ -11,10 +11,10 @@ use Illuminate\Support\Str;
 
 class ProductsRepository implements Contracts\ProductsRepositoryContract
 {
-
     public function __construct(protected ImageRepositoryContract $imageRepo)
     {
     }
+
     public function create(CreateProductRequest $request): Product|false
     {
         try {
@@ -31,6 +31,7 @@ class ProductsRepository implements Contracts\ProductsRepositoryContract
         } catch (\Exception $exception) {
             DB::rollBack();
             logs()->warning($exception);
+
             return false;
         }
     }
@@ -56,10 +57,10 @@ class ProductsRepository implements Contracts\ProductsRepositoryContract
         } catch (\Exception $exception) {
             DB::rollBack();
             logs()->warning($exception);
+
             return false;
         }
     }
-
 
     protected function setProductData(Product $product, array $data): void
     {
@@ -67,11 +68,11 @@ class ProductsRepository implements Contracts\ProductsRepositoryContract
             $product->categories()->detach();
         }
 
-        if (!empty($data['categories'])) {
+        if (! empty($data['categories'])) {
             $product->categories()->attach($data['categories']);
         }
 
-        if (!empty($data['attributes']['images'])) {
+        if (! empty($data['attributes']['images'])) {
             $this->imageRepo->attach(
                 $product,
                 'images',
@@ -85,7 +86,7 @@ class ProductsRepository implements Contracts\ProductsRepositoryContract
     {
         return [
             'attributes' => collect($request->validated())->except(['categories'])->toArray(),
-            'categories' => $request->get('categories', [])
+            'categories' => $request->get('categories', []),
         ];
     }
 
@@ -96,5 +97,4 @@ class ProductsRepository implements Contracts\ProductsRepositoryContract
             $attributes
         );
     }
-
 }

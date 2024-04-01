@@ -11,7 +11,6 @@ use Database\Seeders\UsersSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
-use Mockery;
 use Mockery\MockInterface;
 use Tests\TestCase;
 
@@ -42,6 +41,7 @@ class ProductsTest extends TestCase
         $response->assertViewIs('admin.products.index');
         $response->assertSeeInOrder($products->pluck('title')->toArray());
     }
+
     public function test_does_note_allow_see_categories_with_role_customer()
     {
 
@@ -50,34 +50,32 @@ class ProductsTest extends TestCase
 
         $response->assertStatus(403);
     }
+
     public function test_create_product_with_valid_date()
     {
         $data = Product::factory()->make()->toArray();
 
         $response = $this->actingAs($this->getUser())
-            ->post(route('admin.products.index'),$data);
-
+            ->post(route('admin.products.index'), $data);
 
         $response->assertStatus(302);
 
-
     }
+
     public function test_create_product_with_invalid_date()
     {
         $data = ['title' => 'a'];
 
         $response = $this->actingAs($this->getUser())
-            ->post(route('admin.products.index'),$data);
-
+            ->post(route('admin.products.index'), $data);
 
         $response->assertStatus(302);
 
-
     }
+
     public function test_editing_product_with_valid_data()
     {
         $product = Product::factory()->create();
-
 
         $updatedName = 'Phone 15 pro';
 
@@ -86,40 +84,37 @@ class ProductsTest extends TestCase
                 'title' => $updatedName,
                 'SKU' => 'new_sku_value',
                 'price' => 10.99,
-                'quantity' => 100
+                'quantity' => 100,
             ]);
 
         $response->assertStatus(302);
-
 
         $updatedCategory = Product::find($product->id);
         $this->assertEquals($updatedName, $updatedCategory->title);
 
     }
+
     public function test_editing_product_with_invalid_data()
     {
         $product = Product::factory()->create();
-
 
         $response = $this->actingAs($this->getUser())
             ->put(route('admin.products.update', $product), [
                 'title' => 'Phone 15 pro',
                 'SKU' => '',
                 'price' => 10.99,
-                'quantity' => 100
+                'quantity' => 100,
             ]);
 
         $response->assertStatus(302);
     }
 
-
     public function test_create_product(): void
     {
-        $file =UploadedFile::fake()->image('test_image.png');
+        $file = UploadedFile::fake()->image('test_image.png');
 
-        $data  = array_merge
-        (Product::factory()->make()->toArray(),
-        ['thumbnail' =>$file]
+        $data = array_merge(Product::factory()->make()->toArray(),
+            ['thumbnail' => $file]
         );
 
         $this->mock(
@@ -131,20 +126,21 @@ class ProductsTest extends TestCase
         );
 
         $this->actingAs(User::role('admin')->first())
-            ->post(route('admin.products.store'),$data);
+            ->post(route('admin.products.store'), $data);
 
-      $this->assertDatabaseHas(Product::class,[
-          'title' => $data['title'],
-          'thumbnail' => 'image_uploaded.png'
-      ]);
+        $this->assertDatabaseHas(Product::class, [
+            'title' => $data['title'],
+            'thumbnail' => 'image_uploaded.png',
+        ]);
 
     }
+
     public function test_create_product_with_invalid_image_format(): void
     {
 
-        $file =UploadedFile::fake()->create('test_file.txt');
+        $file = UploadedFile::fake()->create('test_file.txt');
 
-        $data  = array_merge(
+        $data = array_merge(
             Product::factory()->make()->toArray(),
             ['thumbnail' => $file]
         );
@@ -153,33 +149,29 @@ class ProductsTest extends TestCase
             ->post(route('admin.products.store'), $data)
             ->assertSessionHasErrors(['thumbnail']);
     }
+
     public function test_update_product_with_valid_date()
     {
         $product = Product::factory()->create();
 
-
-
-
         $response = $this->actingAs($this->getUser())
-            ->put(route('admin.products.update',$product),[
+            ->put(route('admin.products.update', $product), [
                 'title' => $product->title,
 
             ]);
 
-
         $response->assertStatus(302);
         $product->refresh();
 
-
     }
+
     public function test_update_product_with_invalid_date()
     {
         $product = Product::factory()->create();
 
-
         $response = $this->actingAs($this->getUser())
-            ->put(route('admin.products.update',$product),[
-                'title' => "",
+            ->put(route('admin.products.update', $product), [
+                'title' => '',
 
             ]);
 
@@ -194,7 +186,7 @@ class ProductsTest extends TestCase
 
         $this->assertDatabaseHas(Product::class,
             [
-                'title' => $product->title
+                'title' => $product->title,
             ]);
 
         $response = $this->actingAs($this->getUser())
@@ -203,10 +195,9 @@ class ProductsTest extends TestCase
         $response->assertStatus(302);
         $response->assertRedirectToRoute('admin.products.index');
 
-
         $this->assertDatabaseMissing(Product::class,
             [
-                'title' => $product->title
+                'title' => $product->title,
             ]);
     }
 
@@ -214,7 +205,6 @@ class ProductsTest extends TestCase
     {
 
         $product = Product::factory()->create();
-
 
         $this->assertDatabaseHas(Product::class, ['title' => $product->title]);
 
@@ -232,7 +222,7 @@ class ProductsTest extends TestCase
         $response->assertStatus(404);
     }
 
-        protected function getUser(Roles $role = Roles::ADMIN):User
+    protected function getUser(Roles $role = Roles::ADMIN): User
     {
         return User::role($role->value)->firstOrFail();
 

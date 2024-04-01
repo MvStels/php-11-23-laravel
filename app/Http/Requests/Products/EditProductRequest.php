@@ -25,6 +25,7 @@ class EditProductRequest extends FormRequest
     public function rules(): array
     {
         $productId = $this->route('product')->id;
+
         return [
             'title' => ['required', 'string', 'min:2', 'max:255', Rule::unique(Product::class, 'title')->ignore($productId)],
             'description' => ['nullable', 'string'],
@@ -33,7 +34,7 @@ class EditProductRequest extends FormRequest
             'new_price' => ['nullable', 'numeric', 'min:1'],
             'quantity' => ['required', 'numeric', 'min:0'],
             'thumbnail' => ['image:jpeg,png'],
-            'categories.*' => ['required', 'numeric', 'exists:' . Category::class . ',id'],
+            'categories.*' => ['required', 'numeric', 'exists:'.Category::class.',id'],
         ];
     }
 }

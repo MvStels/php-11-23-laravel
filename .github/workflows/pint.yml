@@ -1,4 +1,4 @@
-     name: Laravel Pint
+name: Laravel Pint
 
 on:
   pull_request:
@@ -17,4 +17,4 @@ jobs:
             testMode: true
             useComposer: true
             onlyDirty: false
-      
+
