@@ -50,6 +50,7 @@ class FileStorageServiceTest extends TestCase
     protected function uploadFile($fileName = 'image.png', $additionPath = ''):string
     {
         $file=UploadedFile::fake()->image($fileName);
+        //TetsUpdate
         return $this->service->upload($file ,$additionPath);
     }
 }
