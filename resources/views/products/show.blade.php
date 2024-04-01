@@ -23,11 +23,13 @@
                             </div>
                         @endforeach
                     </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+                            data-bs-slide="prev">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                         <span class="visually-hidden">Previous</span>
                     </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+                            data-bs-slide="next">
                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
                         <span class="visually-hidden">Next</span>
                     </button>
@@ -46,12 +48,34 @@
                         </div>
                     </div>
                     <p class="mb-2">Quantity: {{ $product->quantity }}</p>
+                    @auth()
+                        <div class="d-flex justify-content-end w-100 align-items-center">
+                            @include(
+                                'products.parts.wishlist.price',
+                                [
+                                    'product' => $product,
+                                    'isFollowed' => auth()->user()->isWishedProduct($product),
+                                    'minimized' => false
+                                ]
+                            )
+                            @include(
+                                'products.parts.wishlist.exists',
+                                [
+                                    'product' => $product,
+                                    'isFollowed' => auth()->user()->isWishedProduct($product, 'exist'),
+                                    'minimized' => false
+                                ]
+                            )
+                        </div>
+                    @endauth
                     <div class="d-flex justify-content-end w-100 align-items-center price-container">
-                        <h5 class="me-2 mb-0">{{$product->price}}$</h5>
-                        @if($isInCart)
-                            @include('cart.parts.remove_button', ['product' => $product, 'rowId' => $rowId])
-                        @else
-                            @include('cart.parts.add_button', ['product' => $product])
+                        <h5 class="me-2 mb-0">{{$product->finalPrice}}$</h5>
+                        @if($product->isExists)
+                            @if($isInCart)
+                                @include('cart.parts.remove_button', ['product' => $product, 'rowId' => $rowId])
+                            @else
+                                @include('cart.parts.add_button', ['product' => $product])
+                            @endif
                         @endif
                     </div>
                 </div>

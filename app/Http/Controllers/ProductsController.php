@@ -15,7 +15,7 @@ class ProductsController extends Controller
             ->available()
             ->get();
 
-        return view('products.index', compact('products'));
+        return view('products/index', compact('products'));
     }
 
     public function show(Product $product)
@@ -25,7 +25,7 @@ class ProductsController extends Controller
         $rowId = $this->getProductFromCart($product)?->rowId;
         $isInCart = !!$rowId;
 
-        return view('products.show', compact('product', 'gallery', 'isInCart', 'rowId'));
+        return view('products/show', compact('product', 'gallery', 'isInCart', 'rowId'));
     }
 
     protected function getProductFromCart(Product $product): CartItem | null
