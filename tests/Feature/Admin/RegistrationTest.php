@@ -31,7 +31,7 @@ class RegistrationTest extends TestCase
 
         $response = $this->post(route('register'), $userData);
 
-        $response->assertRedirect('/home');
+        $response->assertRedirect('/');
         $this->assertDatabaseHas('users', ['email' => 'admin@23admin.com']);
 
         $user = User::where('email', 'admin@23admin.com')->first();
