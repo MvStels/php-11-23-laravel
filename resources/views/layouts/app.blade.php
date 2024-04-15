@@ -16,7 +16,8 @@
     <link href="{{ asset('css/iziToast.css') }}" rel="stylesheet">
     @auth
         <script>
-            window.userID = {{ auth()->id() }}
+                window.userID = {{ auth()->id() }}
+                window.baseUrl = {{ url('/') }}
         </script>
     @endauth
 
